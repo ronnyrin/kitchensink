@@ -331,6 +331,40 @@ export const CollectionActions = (props: CollectionActionsProps) => {
   }
 };
 
+// Headless component for filter controls
+export interface CollectionFilterProps {
+  children: (props: {
+    filter: Record<string, any>;
+    setFilter: (filter: Record<string, any>) => void;
+  }) => React.ReactNode;
+}
+export const CollectionFilter = (props: CollectionFilterProps) => {
+  const service = useService(CollectionServiceDefinition) as ServiceAPI<
+    typeof CollectionServiceDefinition
+  >;
+  return props.children({
+    filter: service.filter?.get() || {},
+    setFilter: service.setFilter || (() => {}),
+  });
+};
+
+// Headless component for sort controls
+export interface CollectionSortProps {
+  children: (props: {
+    sort: { field: string; order: "ASC" | "DESC" };
+    setSort: (sort: { field: string; order: "ASC" | "DESC" }) => void;
+  }) => React.ReactNode;
+}
+export const CollectionSort = (props: CollectionSortProps) => {
+  const service = useService(CollectionServiceDefinition) as ServiceAPI<
+    typeof CollectionServiceDefinition
+  >;
+  return props.children({
+    sort: service.sort?.get() || { field: "name", order: "ASC" },
+    setSort: service.setSort || (() => {}),
+  });
+};
+
 // Namespace export for clean API
 export const Collection = {
   ProductGrid,
@@ -338,4 +372,6 @@ export const Collection = {
   LoadMoreProducts,
   CollectionHeader,
   CollectionActions,
+  CollectionFilter,
+  CollectionSort,
 } as const;
